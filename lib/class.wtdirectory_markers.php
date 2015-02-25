@@ -28,6 +28,11 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('wt_dir
 
 class wtdirectory_markers extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
+	/**
+	 * @var \TYPO3\CMS\Core\Log\Logger
+	 */
+	protected $logger;
+
 	public $extKey = 'wt_directory'; // Extension key
 	public $prefixId = 'tx_wtdirectory_pi1'; // Same as class name
 	public $scriptRelPath = 'pi1/class.tx_wtdirectory_pi1_detail.php'; // Path to any script in pi1 for locallang
@@ -37,6 +42,10 @@ class wtdirectory_markers extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 			'hidden',
 			'deleted'
 	);
+
+	public function __construct(){
+		$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+	}
 
 	/**
 	 * Function makeMarkers() makes markers from row (uid => ###WTDIRECTORY_UID###)
@@ -160,7 +169,14 @@ class wtdirectory_markers extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		if (!empty($row)) { // If row is set
 			foreach ($this->conf[$what . '.']['field.'] as $key => $value) { // one loop for every db field
 				if (!stristr($key, '.')) { // only if no . is in ts
-					$markerArray['###WTDIRECTORY_' . strtoupper($key) . '###'] = $this->cObj->cObjGetSingle($this->conf[$what . '.']['field.'][$key], $this->conf[$what . '.']['field.'][$key . '.']); // value
+					try{
+						$renderedTyposcriptObject = $this->cObj->cObjGetSingle($this->conf[$what . '.']['field.'][$key], $this->conf[$what . '.']['field.'][$key . '.']); // value
+						if ($renderedTyposcriptObject) {
+							$markerArray['###WTDIRECTORY_'.strtoupper($key).'###'] = $renderedTyposcriptObject;
+						}
+					}catch (Exception $ex){
+						$this->logger->debug("Error while rendering ###WTDIRECTORY_".strtoupper($key)."### marker");
+					}
 				}
 			}
 		}
