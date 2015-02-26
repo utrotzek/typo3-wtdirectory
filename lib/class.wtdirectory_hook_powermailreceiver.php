@@ -23,7 +23,7 @@
  ***************************************************************/
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class tx_wtdirectory_powermailreceiver extends AbstractPlugin {
+class tx_wtdirectory_powermailreceiver extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
 	var $extKey = 'wt_directory'; // Extension key
 	var $prefixId = 'tx_wtdirectory_pi1'; // Same as class name
