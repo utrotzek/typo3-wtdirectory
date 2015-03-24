@@ -44,6 +44,7 @@ class wtdirectory_markers extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	);
 
 	public function __construct(){
+		parent::__construct();
 		$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
 	}
 
